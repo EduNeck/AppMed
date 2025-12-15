@@ -38,7 +38,7 @@ export class AuthService {
     const perms = await this.getPermisos(u.id_usuario);
 
     const payload = {
-      sub: u.id_usuario,
+      sub: Number(u.id_usuario),
       username: u.username,
       perms,
     };
