@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsOptional,
@@ -51,5 +52,6 @@ export class UpdatePacienteDto {
   direccion?: string;
 
   @IsOptional()
+  @IsBoolean()
   activo?: boolean;
 }

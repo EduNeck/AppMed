@@ -144,4 +144,31 @@ export class PacientesService {
 
     return { ok: true };
   }
+
+  async delete(id: number, actorId?: number) {
+    const pool = this.db.getPool();
+
+    const check = await pool
+      .request()
+      .input('id', sql.BigInt, id)
+      .query(`SELECT id_paciente FROM ${TBL} WHERE id_paciente=@id;`);
+
+    if (!check.recordset.length)
+      throw new NotFoundException('Paciente no encontrado');
+
+    // Soft delete: marcamos como inactivo en lugar de eliminar
+    await pool
+      .request()
+      .input('id', sql.BigInt, id)
+      .input('updated_by', sql.BigInt, actorId ?? null).query(`
+        UPDATE ${TBL}
+        SET
+          activo = 0,
+          updated_at = SYSDATETIME(),
+          updated_by = @updated_by
+        WHERE id_paciente=@id;
+      `);
+
+    return { ok: true };
+  }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -48,5 +49,11 @@ export class PacientesController {
     @Req() req: any,
   ) {
     return this.srv.update(id, dto, Number(req.user.sub));
+  }
+
+  @Perms('PAC_ELIMINAR')
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    return this.srv.delete(id, Number(req.user.sub));
   }
 }
