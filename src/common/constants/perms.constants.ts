@@ -11,6 +11,21 @@ export const PACIENTES_PERMS = {
   ELIMINAR: 'PAC_ELIMINAR',
 } as const;
 
+// Permisos del módulo de Médicos
+export const MEDICOS_PERMS = {
+  VER: 'MED_VER',
+  CREAR: 'MED_CREAR',
+  EDITAR: 'MED_EDITAR',
+  ELIMINAR: 'MED_ELIMINAR',
+} as const;
+
+// Permisos del módulo de Fichas Médicas
+export const FICHAS_MEDICAS_PERMS = {
+  VER: 'FICHA_VER',
+  CREAR: 'FICHA_CREAR',
+  EDITAR: 'FICHA_EDITAR',
+} as const;
+
 // Permisos del módulo de Seguridad
 export const SEGURIDAD_PERMS = {
   USR_VER: 'USR_VER',

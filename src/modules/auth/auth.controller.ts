@@ -17,4 +17,10 @@ export class AuthController {
   me(@Req() req: any) {
     return this.auth.me(req.user.sub);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  logout(@Req() req: any) {
+    return this.auth.logout(req.user.sub);
+  }
 }

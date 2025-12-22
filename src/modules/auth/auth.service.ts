@@ -21,7 +21,9 @@ export class AuthService {
           u.id_usuario,
           u.username,
           u.hash_password,
-          u.activo
+          u.activo,
+          u.nombres,
+          u.apellidos
         FROM seg.usuario u
         WHERE u.username = @username
       `);
@@ -55,7 +57,12 @@ export class AuthService {
 
     return {
       access_token,
-      user: { id: u.id_usuario, username: u.username },
+      user: {
+        id: u.id_usuario,
+        username: u.username,
+        firstname: u.nombres,
+        lastname: u.apellidos,
+      },
       perms,
     };
   }
@@ -75,6 +82,28 @@ export class AuthService {
     const perms = await this.getPermisos(userId);
 
     return { user: u.recordset[0], perms };
+  }
+
+  async logout(userId: number) {
+    // En aplicaciones JWT, el logout generalmente se maneja del lado cliente
+    // eliminando el token. Sin embargo, aquí registramos la acción de logout
+    // para auditoría.
+
+    try {
+      // Intentar actualizar último logout para auditoría (si la columna existe)
+      const pool = this.db.getPool();
+      await pool
+        .request()
+        .input('id', sql.BigInt, userId)
+        .query(
+          `UPDATE seg.usuario SET ultimo_logout = SYSDATETIME() WHERE id_usuario = @id;`,
+        );
+    } catch (error) {
+      // Si la columna no existe, continuar sin error
+      console.log('Columna ultimo_logout no existe aún:', error.message);
+    }
+
+    return { message: 'Logout exitoso' };
   }
 
   private async getPermisos(userId: number): Promise<string[]> {
