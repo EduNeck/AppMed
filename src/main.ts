@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import { MssqlService } from './database/mssql.service';
@@ -7,9 +8,18 @@ import { MssqlService } from './database/mssql.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Configurar CORS
+  // Seguridad: HTTP headers
+  app.use(helmet());
+
+  // Configurar CORS usando variable de entorno (lista separada por comas)
+  const rawOrigins = process.env.CORS_ORIGINS || 'http://localhost:9000';
+  const allowedOrigins = rawOrigins
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
+
   app.enableCors({
-    origin: ['http://localhost:9000', 'http://127.0.0.1:9000'], // Frontend URLs
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -20,7 +30,7 @@ async function bootstrap() {
   const db = app.get(MssqlService);
   app.useGlobalInterceptors(new AuditInterceptor(db));
 
-  const port = Number(process.env.APP_PORT || 3000); // Cambiar a 3000
+  const port = Number(process.env.APP_PORT || 3000);
   await app.listen(port);
   console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 }

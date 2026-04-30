@@ -98,9 +98,9 @@ export class AuthService {
         .query(
           `UPDATE seg.usuario SET ultimo_logout = SYSDATETIME() WHERE id_usuario = @id;`,
         );
-    } catch (error) {
+    } catch {
       // Si la columna no existe, continuar sin error
-      console.log('Columna ultimo_logout no existe aún:', error.message);
+      console.warn('No se pudo registrar ultimo_logout (columna inexistente?)');
     }
 
     return { message: 'Logout exitoso' };
