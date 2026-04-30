@@ -13,7 +13,8 @@ export class MssqlService implements OnModuleInit {
       database: process.env.DB_NAME,
       options: {
         encrypt: String(process.env.DB_ENCRYPT).toLowerCase() === 'true',
-        trustServerCertificate: true,
+        trustServerCertificate:
+          String(process.env.DB_TRUST_SERVER_CERT).toLowerCase() === 'true',
       },
     }).connect();
   }
